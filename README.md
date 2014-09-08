@@ -11,6 +11,6 @@ http://zxing.github.io/zxing/apidocs/
 
 Default barcode:
 ```
-			QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeSampleCreate.png", "png");
-			QRcodeEncoder.createQRcode(qRcodeEntity);
+QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeSampleCreate.png", "png");
+QRcodeEncoder.createQRcode(qRcodeEntity);
 ```
