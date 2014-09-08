@@ -5,20 +5,68 @@ import org.junit.Test;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.qikemi.packages.zxing.QRcodeEncoder;
 import com.qikemi.packages.zxing.QRcodeEntity;
+import com.qikemi.packages.zxing.QRcodeLogoEntity;
 
 public class ZxingQRcodeTest {
 	
 	@Test
-	public void test1() {
+	public void qrCodeSampleCreate() {
 		try {
-//			int width = 200;
-//			int height = 200;
-//			String content = "测试信息图片的内容哦。";
-//			BitMatrix matrix = MatrixToImageWriterEx.createQRCode(content, width, height);
-//			MatrixToLogoImageConfig logoConfig = new MatrixToLogoImageConfig(Color.BLACK, 2);
-//			MatrixToImageWriterEx.writeToFile(matrix, "jpg", "E:/img/1.jpg", "E:/img/1.jpg", logoConfig);
-//			System.out.println("生成二维码结束！");
-			QRcodeEncoder.createQRcode(new QRcodeEntity("http://www.baidu.com", "E://logo.png", 200, 200, true, "E://logo.png", "jpg", ErrorCorrectionLevel.H, "UTF-8", 0));
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeSampleCreate.png", "png");
+			QRcodeEncoder.createQRcode(qRcodeEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void qrCodeSampleCreate2() {
+		try {
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeSampleCreate2.png", 200, 200, "png");
+			QRcodeEncoder.createQRcode(qRcodeEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void qrCodeFullCreate3() {
+		try {
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("举头望明月，低头思故乡。\r\n可惜阴天呀。", "E://qrCodeFullCreate3.png", 300, 300, "png", ErrorCorrectionLevel.H, "GBK", 0);
+			QRcodeEncoder.createQRcode(qRcodeEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void qrCodeLogoCreate() {
+		try {
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeLogoCreate.png", "png");
+			QRcodeLogoEntity rcodeLogoEntity = new QRcodeLogoEntity("E://l.png");
+			QRcodeEncoder.createQRcode(qRcodeEntity, rcodeLogoEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void qrCodeLogoCreate2() {
+		try {
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("http://www.baidu.com", "E://qrCodeLogoCreate2.png", 200, 200, "png");
+			QRcodeLogoEntity rcodeLogoEntity = new QRcodeLogoEntity("E://l.png");
+			QRcodeEncoder.createQRcode(qRcodeEntity, rcodeLogoEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void qrCodeLogoCreate3() {
+		try {
+			QRcodeEntity qRcodeEntity = new QRcodeEntity("举头望明月，低头思故乡。", "E://qrCodeLogoCreate3.png", 300, 300, "png", ErrorCorrectionLevel.H, "GBK", 0);
+			QRcodeLogoEntity rcodeLogoEntity = new QRcodeLogoEntity("E://l.png");
+			QRcodeEncoder.createQRcode(qRcodeEntity, rcodeLogoEntity);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
