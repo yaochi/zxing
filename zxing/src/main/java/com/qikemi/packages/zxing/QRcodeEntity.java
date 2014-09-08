@@ -22,41 +22,25 @@ public class QRcodeEntity implements Serializable {
 	 */
 	private String barCodePath;
 	/**
-	 * 二维码图片的宽度
+	 * 二维码图片的宽度，默认100px 
 	 */
-	private Integer width;
+	private Integer width = 100;
 	/**
-	 * 二维码图片的高度
+	 * 二维码图片的高度，默认同width 
 	 */
-	private Integer height;
+	private Integer height = this.width;
 	/**
-	 * 是否添加logo图片
+	 * 生成图片的格式（默认png） ImageIO.write jpg png
 	 */
-	private boolean hasLogo;
+	private String barCodeImgFormat = "png";
 	/**
-	 * logo图片地址
+	 * 纠错级别，默认ErrorCorrectionLevel.H
+	 * http://zxing.github.io/zxing/apidocs/com/google/zxing/qrcode/decoder/
+	 * ErrorCorrectionLevel.html Enum Constant and Description H H = ~30%
+	 * correction L L = ~7% correction M M = ~15% correction Q Q = ~25%
+	 * correction
 	 */
-	private String logoPath;
-	/**
-	 * 生成图片的格式（默认）
-	 * ImageIO.write
-	 * jpg png 
-	 */
-	private String barCodeImgFormat;
-	/**
-	 * 纠错级别
-	 * http://zxing.github.io/zxing/apidocs/com/google/zxing/qrcode/decoder/ErrorCorrectionLevel.html 
-	 * Enum Constant and Description 
-	 * H 
-	 * H = ~30% correction 
-	 * L 
-	 * L = ~7% correction 
-	 * M 
-	 * M = ~15% correction 
-	 * Q 
-	 * Q = ~25% correction
-	 */
-	private ErrorCorrectionLevel errorCorrectionLevel;
+	private ErrorCorrectionLevel errorCorrectionLevel = ErrorCorrectionLevel.H;
 	/**
 	 * 编码 http://zxing.github.io/zxing/apidocs/ AZTEC_LAYERS Specifies the
 	 * required number of layers for an Aztec code: a negative number (-1, -2,
@@ -74,32 +58,48 @@ public class QRcodeEntity implements Serializable {
 	 * minimum and maximum number of rows and columns for PDF417 (type
 	 * Dimensions).
 	 */
-	private String encodeCharacterSet;
+	private String encodeCharacterSet = "UTF-8";
 	/**
-	 * 边缘留白 
+	 * 边缘留白，默认2px 
 	 */
-	private Integer margin;
+	private Integer margin = 2;
 	/**
 	 * 设置二维码版本
 	 * http://zxing.github.io/zxing/apidocs/com/google/zxing/qrcode/decoder/Version.html
 	 */
 	private int version;
-	
+
+	// default 
 	public QRcodeEntity() {
 		super();
 	}
-
+	
+	// sample 
+	public QRcodeEntity(String content, String barCodePath, String barCodeImgFormat) {
+		this.content = content;
+		this.barCodePath = barCodePath;
+		this.barCodeImgFormat = barCodeImgFormat;
+	}
+	
+	// sample 2
+	public QRcodeEntity(String content, String barCodePath, Integer width, Integer height, String barCodeImgFormat) {
+		super();
+		this.content = content;
+		this.barCodePath = barCodePath;
+		this.width = width;
+		this.height = height;
+	}
+	
+	// full 
 	public QRcodeEntity(String content, String barCodePath, Integer width,
-			Integer height, boolean hasLogo, String logoPath,
-			String barCodeImgFormat, ErrorCorrectionLevel errorCorrectionLevel,
+			Integer height, String barCodeImgFormat,
+			ErrorCorrectionLevel errorCorrectionLevel,
 			String encodeCharacterSet, int version) {
 		super();
 		this.content = content;
 		this.barCodePath = barCodePath;
 		this.width = width;
 		this.height = height;
-		this.hasLogo = hasLogo;
-		this.logoPath = logoPath;
 		this.barCodeImgFormat = barCodeImgFormat;
 		this.errorCorrectionLevel = errorCorrectionLevel;
 		this.encodeCharacterSet = encodeCharacterSet;
@@ -139,22 +139,6 @@ public class QRcodeEntity implements Serializable {
 		this.height = height;
 	}
 
-	public boolean isHasLogo() {
-		return hasLogo;
-	}
-
-	public void setHasLogo(boolean hasLogo) {
-		this.hasLogo = hasLogo;
-	}
-
-	public String getLogoPath() {
-		return logoPath;
-	}
-
-	public void setLogoPath(String logoPath) {
-		this.logoPath = logoPath;
-	}
-
 	public String getBarCodeImgFormat() {
 		return barCodeImgFormat;
 	}
@@ -167,7 +151,8 @@ public class QRcodeEntity implements Serializable {
 		return errorCorrectionLevel;
 	}
 
-	public void setErrorCorrectionLevel(ErrorCorrectionLevel errorCorrectionLevel) {
+	public void setErrorCorrectionLevel(
+			ErrorCorrectionLevel errorCorrectionLevel) {
 		this.errorCorrectionLevel = errorCorrectionLevel;
 	}
 
@@ -194,5 +179,5 @@ public class QRcodeEntity implements Serializable {
 	public void setMargin(Integer margin) {
 		this.margin = margin;
 	}
-	
+
 }
