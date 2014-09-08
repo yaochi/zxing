@@ -1,7 +1,5 @@
 package com.qikemi.packages.zxing;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -47,7 +45,8 @@ public class QRcodeEncoder {
 	}
 	
 	/**
-	 * create a new QRcode width 
+	 * create a new QRcode
+	 * @param qRcodeEntity
 	 */
 	public static void createQRcode(QRcodeEntity qRcodeEntity){
 		Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
@@ -83,53 +82,101 @@ public class QRcodeEncoder {
 			// save QRcode  
 			outputStream.flush();
 			outputStream.close();
-			
-			// judge has or has not logo 
-			if(qRcodeEntity.isHasLogo()){
-				BufferedImage bufferedImage = ImageIO.read(new FileInputStream(barCodeFile));
-				int width_4 = matrix.getWidth() / 4;  
-	            int width_8 = width_4 / 2;  
-	            int height_4 = matrix.getHeight() / 4;  
-	            int height_8 = height_4 / 2; 
-	            /* 返回由指定矩形区域定义的子图像 */  
-	            BufferedImage bufferedTargetImage = bufferedImage.getSubimage(width_4 + width_8, height_4 + height_8, width_4, height_4);  
-				/*获取一个绘图工具笔*/ 
-				Graphics2D graphics2d = bufferedTargetImage.createGraphics();
-				/*读取logo图片信息*/
-				File logoFile = new File(qRcodeEntity.getLogoPath());
-				BufferedImage logoBufferImg = ImageIO.read(logoFile);
-	            /*当前图片的宽与高*/  
-	            int currentLogoWidth = logoBufferImg.getWidth(null);
-	            int currentLogoHeight = logoBufferImg.getHeight(null);
-	            /*处理图片的宽与高*/  
-	            int resultLogoWidth = 0;  
-	            int resultLogoHeight = 0;  
-	            if(currentLogoWidth != width_4){  
-	            	resultLogoWidth = width_4;  
-	            }  
-	            if(currentLogoHeight != width_4){  
-	            	resultLogoHeight = width_4;  
-	            } 
-	            /*设置边框*/
-	            graphics2d.setStroke(new BasicStroke(2));
-	            graphics2d.setColor(Color.RED);
-	            /*绘制图片*/  
-	            graphics2d.drawImage(logoBufferImg, 0, 0, resultLogoWidth, resultLogoHeight, null);
-	            graphics2d.dispose();
-	            bufferedImage.flush(); 
-				/* save file */
-				ImageIO.write(bufferedImage, qRcodeEntity.getBarCodeImgFormat(), barCodeFile);
-			}
+			logger.debug("METHOD: createQRcode(QRcodeEntity qRcodeEntity) create The QRcode success.");
 		} catch (WriterException e) {
-			logger.debug(e.getMessage());
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity) occur a WriterException Exception: " + e.getMessage());
 		}catch (FileNotFoundException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity) occur a FileNotFoundException Exception: " + e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity) occur an IOException Exception: " + e.getMessage());
 		} 
-		
-		
-		
+	}
+	
+	/**
+	 * create a new QRcode with LOGO
+	 * @param qRcodeEntity
+	 */
+	public static void createQRcode(QRcodeEntity qRcodeEntity, QRcodeLogoEntity qRcodeLogoEntity){
+		Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+		// char set 
+		if(null == qRcodeEntity.getEncodeCharacterSet()){
+			hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+		}else{
+			hints.put(EncodeHintType.CHARACTER_SET, qRcodeEntity.getEncodeCharacterSet());
+		}
+		// set error correction level 
+		if(null == qRcodeEntity.getErrorCorrectionLevel()){
+			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+		}else{
+			hints.put(EncodeHintType.ERROR_CORRECTION, qRcodeEntity.getErrorCorrectionLevel());
+		}
+		// set margin 
+		if(null == qRcodeEntity.getMargin()){
+			hints.put(EncodeHintType.MARGIN, 0);
+		}else{
+			hints.put(EncodeHintType.MARGIN, qRcodeEntity.getMargin());
+		}
+		OutputStream outputStream = null;
+		try {
+			BitMatrix matrix = QRcodeEncoder.encode(qRcodeEntity.getContent(), BarcodeFormat.QR_CODE, qRcodeEntity.getWidth(),  qRcodeEntity.getHeight(), hints);
+			File barCodeFile = new File(qRcodeEntity.getBarCodePath());
+			outputStream = new FileOutputStream(barCodeFile);
+			//		Parameters:
+			//			matrix - BitMatrix to write
+			//			format - image format
+			//			file - file Path to write image to
+			//			config - output configuration
+			MatrixToImageWriter.writeToStream(matrix, qRcodeEntity.getBarCodeImgFormat(), outputStream, new MatrixToImageConfig());
+			// save QRcode  
+			outputStream.flush();
+			outputStream.close();
+			
+			// deal with LOGO 
+			BufferedImage bufferedImage = ImageIO.read(new FileInputStream(barCodeFile));
+			int width_4 = matrix.getWidth() / 4;  
+	        int width_8 = width_4 / 2;  
+	        int height_4 = matrix.getHeight() / 4;  
+	        int height_8 = height_4 / 2; 
+	        /* 返回由指定矩形区域定义的子图像 */  
+	        BufferedImage bufferedTargetImage = bufferedImage.getSubimage(width_4 + width_8, height_4 + height_8, width_4, height_4);  
+			/*获取一个绘图工具笔*/ 
+			Graphics2D graphics2d = bufferedTargetImage.createGraphics();
+			/*读取logo图片信息*/
+			File logoFile = new File(qRcodeLogoEntity.getLogoPath());
+			BufferedImage logoBufferImg = ImageIO.read(logoFile);
+	        /*当前图片的宽与高*/  
+	        int currentLogoWidth = logoBufferImg.getWidth(null);
+	        int currentLogoHeight = logoBufferImg.getHeight(null);
+	        /*处理图片的宽与高*/  
+	        int resultLogoWidth = 0;  
+	        int resultLogoHeight = 0;  
+	        if(currentLogoWidth != width_4){  
+	        	resultLogoWidth = width_4;  
+	        }  
+	        if(currentLogoHeight != width_4){  
+	        	resultLogoHeight = width_4;  
+	        } 
+	        /*设置边框*/
+	        graphics2d.setStroke(qRcodeLogoEntity.getStroke());
+	        graphics2d.setColor(qRcodeLogoEntity.getColor());
+	        /*绘制图片*/
+	        graphics2d.drawImage(logoBufferImg, 0, 0, resultLogoWidth, resultLogoHeight, null);
+	        graphics2d.dispose();
+	        bufferedImage.flush(); 
+			/* save file */
+			ImageIO.write(bufferedImage, qRcodeEntity.getBarCodeImgFormat(), barCodeFile);
+			logger.debug("METHOD: createQRcode(QRcodeEntity qRcodeEntity, QRcodeLogoEntity qRcodeLogoEntity) create The QRcode success.");
+		} catch (WriterException e) {
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity, QRcodeLogoEntity qRcodeLogoEntity) occur a WriterException Exception: " + e.getMessage());
+		}catch (FileNotFoundException e) {
+//			e.printStackTrace();
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity, QRcodeLogoEntity qRcodeLogoEntity) occur a FileNotFoundException Exception: " + e.getMessage());
+		} catch (IOException e) {
+//			e.printStackTrace();
+			logger.error("METHOD: createQRcode(QRcodeEntity qRcodeEntity, QRcodeLogoEntity qRcodeLogoEntity) occur an IOException Exception: " + e.getMessage());
+		} 
 	}
 	
 	/**
@@ -150,7 +197,7 @@ public class QRcodeEncoder {
 		WriterException - if encoding can't succeed, because of for example invalid content or configuration
 	*/
 	public static QRCode encode(String contents, ErrorCorrectionLevel ecLevel){
-		MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+//		MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 		return null;//multiFormatWriter.encode(contents, format, width, height);
 	}
 	
